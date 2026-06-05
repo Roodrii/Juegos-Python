@@ -6,7 +6,6 @@ import math
 pygame.init()
 pygame.mixer.init()
 
-# ================= CONFIGURACIÓN =================
 CELL = 30
 COLS, ROWS = 10, 20
 PANEL_W = 250
@@ -15,7 +14,6 @@ HEIGHT = ROWS * CELL
 FPS = 60
 LINEAS_OBJETIVO = 30
 
-# COLORES NEÓN
 C = {
     'bg': (8, 8, 15), 'grid': (25, 25, 40), 'grid_light': (35, 35, 55),
     'I': (0, 255, 255), 'O': (255, 255, 0), 'T': (180, 0, 255),
@@ -53,7 +51,6 @@ except:
     f_pequena = pygame.font.Font(None, 16)
     f_epica = pygame.font.Font(None, 48)
 
-# ================= EFECTOS VISUALES =================
 class Particula:
     def __init__(self, x, y, color, vx, vy, size, life):
         self.x = x
@@ -139,20 +136,16 @@ class TextoFlotante:
         if self.life > 0:
             alpha = int(255 * (self.life / self.max_life))
 
-            # Usar fuente épica si está disponible
             fuente = f_epica if self.epico else pygame.font.SysFont("impact", self.size, bold=True)
             texto_surf = fuente.render(self.texto, True, self.color)
 
-            # Escalar el texto
             if self.scale > 1.0:
                 nuevo_ancho = int(texto_surf.get_width() * self.scale)
                 nuevo_alto = int(texto_surf.get_height() * self.scale)
                 texto_surf = pygame.transform.scale(texto_surf, (nuevo_ancho, nuevo_alto))
 
-            # Crear superficie con alpha
             s = pygame.Surface(texto_surf.get_size(), pygame.SRCALPHA)
 
-            # Glow exterior (más grande para épicos)
             glow_size = 6 if self.epico else 3
             for i in range(glow_size, 0, -1):
                 glow = pygame.transform.scale(texto_surf,
@@ -341,7 +334,6 @@ class Boton:
 
         superficie.blit(texto_surf, texto_rect.topleft)
 
-# ================= CLASES DEL JUEGO =================
 class Pieza:
     def __init__(self, tipo, x=None, y=None):
         self.tipo = tipo
@@ -367,7 +359,7 @@ class TetrisGame:
         self.tick_anim = 0
         self.combo = 0
         self.ultimo_hard_drop = False
-        self.tetris_count = 0  # Contador de Tetris hechos
+        self.tetris_count = 0  
 
     def reset(self):
         self.grid = [[None]*COLS for _ in range(ROWS)]
@@ -456,7 +448,6 @@ class TetrisGame:
             self.nivel = self.lineas // 10 + 1
             self.drop_delay = max(50, 800 - (self.nivel-1)*60)
 
-            # 🎮 MENSAJES GAMER ÉPICOS según líneas limpiadas
             self._mostrar_mensaje_epico(lineas_limpias)
 
             self.shake.activar(intensidad=lineas_limpias * 3, duracion=15)
@@ -472,7 +463,6 @@ class TetrisGame:
         centro_x = COLS * CELL // 2
         centro_y = HEIGHT // 2
 
-        # Mensajes por cantidad de líneas
         if lineas == 1:
             mensajes = ["NICE!", "CLEAN!", "SOLID!", "GOOD!"]
             msg = random.choice(mensajes)
@@ -505,7 +495,6 @@ class TetrisGame:
             ))
             self.flash.activar(C['gold'], 20)
 
-            # Explosión extra de partículas
             for _ in range(50):
                 x = random.randint(0, COLS * CELL)
                 y = random.randint(0, HEIGHT)
@@ -513,7 +502,6 @@ class TetrisGame:
                 vy = random.uniform(-8, 8)
                 self.particulas.append(Particula(x, y, C['gold'], vx, vy, random.randint(4, 8), 60))
 
-        # Mensajes de COMBO
         if self.combo >= 2:
             combo_y = centro_y + 80
             if self.combo == 2:
@@ -796,13 +784,11 @@ class TetrisGame:
             btn_reiniciar.dibujar(pantalla)
             btn_menu.dibujar(pantalla)
 
-# ================= BOTONES GLOBALES =================
 btn_jugar = Boton(WIDTH//2 - 100, 300, 200, 50, "JUGAR", C['green'])
 btn_salir = Boton(WIDTH//2 - 100, 370, 200, 50, "SALIR", C['red'])
 btn_reiniciar = Boton(WIDTH//2 - 110, HEIGHT//2 + 70, 220, 45, "REINICIAR", C['cyan'])
 btn_menu = Boton(WIDTH//2 - 110, HEIGHT//2 + 130, 220, 45, "MENÚ PRINCIPAL", C['purple'])
 
-# ================= BUCLE PRINCIPAL =================
 def main():
     juego = TetrisGame()
 
